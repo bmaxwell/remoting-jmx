@@ -143,6 +143,8 @@ class ClientConnection extends Common implements VersionedConnection {
 
     private int nextCorrelationId = 1;
 
+    final ThreadGroup group = new ThreadGroup(REMOTING_JMX);
+
     /**
      * The in-progress requests awaiting a response.
      */
@@ -174,10 +176,7 @@ class ClientConnection extends Common implements VersionedConnection {
         } else {
             executor = Executors.newCachedThreadPool(new ThreadFactory() {
 
-                final ThreadGroup group = new ThreadGroup(REMOTING_JMX);
-
                 public Thread newThread(Runnable r) {
-                    group.setDaemon(true);
                     return new Thread(group, r, REMOTING_JMX + " " + CLIENT_THREAD + THREAD_NUMBER.getAndIncrement());
                 }
             });

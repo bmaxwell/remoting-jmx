@@ -42,6 +42,7 @@ class ClientExecutorManager {
 
     private boolean manageExecutor = false;
     private final Executor executor;
+    final ThreadGroup group = new ThreadGroup(REMOTING_JMX);
 
     ClientExecutorManager(final Map<String, ?> environment) {
         if (environment != null && environment.containsKey(Executor.class.getName())) {
@@ -49,10 +50,7 @@ class ClientExecutorManager {
         } else {
             executor = Executors.newCachedThreadPool(new ThreadFactory() {
 
-                final ThreadGroup group = new ThreadGroup(REMOTING_JMX);
-
                 public Thread newThread(Runnable r) {
-                    group.setDaemon(true);
                     return new Thread(group, r, REMOTING_JMX + " " + CLIENT_THREAD + THREAD_NUMBER.getAndIncrement());
                 }
             });
